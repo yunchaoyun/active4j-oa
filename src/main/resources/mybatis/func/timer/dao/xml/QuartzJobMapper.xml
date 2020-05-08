@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active4j.hr.func.timer.dao.QuartzJobDao">
+
+	<update id="updateJobById" parameterType="com.active4j.hr.func.timer.entity.QuartzJobEntity">
+		UPDATE func_quartz_job b 
+		<trim prefix="set" suffixOverrides=",">
+			<if test="updateName != null">
+				b.UPDATE_NAME = #{updateName},
+			</if>
+			<if test="jobExecuteStatus != null">
+				b.JOB_EXECUTE_STATUS = #{jobExecuteStatus},
+			</if>
+			<if test="previousTime != null">
+				b.PREVIOS_TIME = #{previousTime},
+			</if>
+		</trim>
+		WHERE b.ID = #{id}
+	</update>
+</mapper>

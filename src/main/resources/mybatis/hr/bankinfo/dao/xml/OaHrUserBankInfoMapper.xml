@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active4j.hr.hr.dao.OaHrUserBankInfoDao">
+
+	<select id="selectPageBankInfo" resultType="com.active4j.hr.hr.domain.OaUserBankInfoModel">
+		SELECT
+			b.REAL_NAME AS OA_USER_NAME, d.NAME AS OA_USER_DEPART_NAME, 
+			c.ID, c.CARD_NO, c.BANK, c.MEMO
+		FROM
+			oa_hr_user_bank_info c
+		LEFT JOIN
+			oa_hr_user b
+		ON
+			c.USER_ID = b.ID
+		LEFT JOIN
+			sys_depart d
+		ON
+			b.DEPT_ID = d.ID
+		<where>
+			<if test="oaUserName!=null and oaUserName!=''">  
+			    and b.REAL_NAME = #{oaUserName} 
+			</if>
+			<if test="departId!=null and departId!=''">  
+			    and d.ID = #{departId} 
+			</if>
+		</where>
+		ORDER BY c.CREATE_DATE DESC
+	</select>
+</mapper>

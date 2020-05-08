@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active4j.hr.activiti.dao.WorkflowDao">
+
+	<select id="findFinishedTaskByUserName" resultType="com.active4j.hr.activiti.entity.WorkflowBaseEntity">
+		SELECT DISTINCT
+			B.ID,
+			B.APPLY_DATE,
+			B.APPLY_NAME,
+			B.BUSINESS_ID,
+			B.CATEGORY_ID,
+			B.CREATE_DATE,
+			B.CREATE_NAME,
+			B. LEVEL,
+			B. NAME,
+			B.PROJECT_NO,
+			B. STATUS,
+			B.USER_NAME,
+			B.WORKFLOW_ID,
+			B.WORKFLOW_NAME
+		FROM
+			wf_base b,
+			act_hi_procinst p,
+			act_hi_taskinst t
+		WHERE
+			b.ID = p.BUSINESS_KEY_
+		AND p.PROC_INST_ID_ = t.PROC_INST_ID_
+		AND t.ASSIGNEE_ = #{userName}
+		<if test="categoryId!=null and categoryId!=''">  
+			    and b.CATEGORY_ID = #{categoryId} 
+		</if>
+		<if test="projectNo!=null and projectNo!=''">  
+			    and b.PROJECT_NO = #{projectNo} 
+		</if>
+		<if test="name!=null and name!=''">  
+			   and b.NAME like concat('%',#{name},'%')
+		</if>
+		<if test="applyName!=null and applyName!=''">  
+			    and b.APPLY_NAME = #{applyName}
+		</if>
+		<if test="applyDateStart!=null and applyDateStart!=''">  
+			    and b.APPLY_DATE &gt;= #{applyDateStart}
+		</if>
+		<if test="applyDateEnd!=null and applyDateEnd!=''">  
+			    and b.APPLY_DATE &lt;= #{applyDateEnd}
+		</if>
+		order by b.APPLY_DATE desc
+	</select>
+
+	<select id="findGroupTaskStrsByUserName" resultType="com.active4j.hr.activiti.entity.WorkflowBaseEntity">
+		SELECT DISTINCT
+			B.ID,
+			B.APPLY_DATE,
+			B.APPLY_NAME,
+			B.BUSINESS_ID,
+			B.CATEGORY_ID,
+			B.CREATE_DATE,
+			B.CREATE_NAME,
+			B. LEVEL,
+			B. NAME,
+			B.PROJECT_NO,
+			B. STATUS,
+			B.USER_NAME,
+			B.WORKFLOW_ID,
+			B.WORKFLOW_NAME
+		FROM
+			act_ru_identitylink a
+		LEFT JOIN act_ru_task t ON a.TASK_ID_ = t.ID_
+		LEFT JOIN act_ru_execution e ON t.PROC_INST_ID_ = e.PROC_INST_ID_
+		LEFT JOIN wf_base B ON E.BUSINESS_KEY_ = B.ID
+		WHERE
+			a.USER_ID_ = #{userName}
+		AND a.type_ = 'candidate'
+		AND e.BUSINESS_KEY_ IS NOT NULL
+		<if test="categoryId!=null and categoryId!=''">  
+			    and b.CATEGORY_ID = #{categoryId} 
+		</if>
+		<if test="projectNo!=null and projectNo!=''">  
+			    and b.PROJECT_NO = #{projectNo} 
+		</if>
+		<if test="name!=null and name!=''">  
+			   and b.NAME like concat('%',#{name},'%')
+		</if>
+		<if test="applyName!=null and applyName!=''">  
+			    and b.APPLY_NAME = #{applyName}
+		</if>
+		<if test="applyDateStart!=null and applyDateStart!=''">  
+			    and b.APPLY_DATE &gt;= #{applyDateStart}
+		</if>
+		<if test="applyDateEnd!=null and applyDateEnd!=''">  
+			    and b.APPLY_DATE &lt;= #{applyDateEnd}
+		</if>
+		ORDER BY
+			B.APPLY_DATE DESC
+	</select>
+	
+	
+	<select id="findGroupTaskIdByBusinessKey" resultType="java.lang.String">
+		SELECT
+			DISTINCT a.TASK_ID_
+		FROM
+			act_ru_identitylink a
+		LEFT JOIN act_ru_task t ON a.TASK_ID_ = t.ID_
+		LEFT JOIN act_ru_execution e ON t.PROC_INST_ID_ = e.PROC_INST_ID_
+		LEFT JOIN wf_base B ON E.BUSINESS_KEY_ = B.ID
+		WHERE
+			a.USER_ID_ = #{userName}
+		AND a.type_ = 'candidate'
+		AND b.ID = #{businessKey}
+		ORDER BY
+			B.APPLY_DATE DESC
+	</select>
+	
+	<select id="findTaskStrsByUserName" resultType="com.active4j.hr.activiti.entity.WorkflowBaseEntity">
+		SELECT DISTINCT
+			B.ID,
+			B.APPLY_DATE,
+			B.APPLY_NAME,
+			B.BUSINESS_ID,
+			B.CATEGORY_ID,
+			B.CREATE_DATE,
+			B.CREATE_NAME,
+			B. LEVEL,
+			B. NAME,
+			B.PROJECT_NO,
+			B. STATUS,
+			B.USER_NAME,
+			B.WORKFLOW_ID,
+			B.WORKFLOW_NAME
+		FROM
+			wf_base b,
+			act_ru_execution e,
+			act_ru_task t
+		WHERE
+			b.ID = e.BUSINESS_KEY_
+		AND e.PROC_INST_ID_ = t.PROC_INST_ID_
+		AND t.ASSIGNEE_ = #{userName}
+		<if test="categoryId!=null and categoryId!=''">  
+			    and b.CATEGORY_ID = #{categoryId} 
+		</if>
+		<if test="projectNo!=null and projectNo!=''">  
+			    and b.PROJECT_NO = #{projectNo} 
+		</if>
+		<if test="name!=null and name!=''">  
+			   and b.NAME like concat('%',#{name},'%')
+		</if>
+		<if test="applyName!=null and applyName!=''">  
+			    and b.APPLY_NAME = #{applyName}
+		</if>
+		<if test="applyDateStart!=null and applyDateStart!=''">  
+			    and b.APPLY_DATE &gt;= #{applyDateStart}
+		</if>
+		<if test="applyDateEnd!=null and applyDateEnd!=''">  
+			    and b.APPLY_DATE &lt;= #{applyDateEnd}
+		</if>
+		order by b.APPLY_DATE desc
+	</select>
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active4j.hr.work.dao.OaWorkTaskDao">
+
+	<select id="queryOaWorkTaskStatusStat" resultType="com.active4j.hr.work.domain.OaWorkTaskStatusDomain">
+		SELECT t.status as value, count(t.id) as num FROM oa_work_task t
+		where t.USER_ID = '${userId}'
+		group by t.status
+	</select>
+	
+	
+</mapper>

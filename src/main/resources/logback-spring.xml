@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration debug="true" scan="true" scanPeriod="30 seconds">
+	<property name="APP_Name" value="active4j-oa" />
+	<!-- kafka生产准生产在一台机器，由此区分 -->
+	<property name="Project_Name" value="active4j-oa" />
+	<property name="LOG_NAME" value="active4j-oa" />
+	<property name="LOG_DIR" value="c:/logs" />
+	<property name="logFileNamePattern" value="${LOG_NAME}_%d{yyyy-MM-dd}_%i" />
+	<property name="fileLayoutPattern" value="[${APP_Name}] [${Project_Name}] [%d] [%level] [%F] [%M] [%t:%L] [] [] [%m]%n" />
+	
+	<!-- Stdout -->
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>
+				[${APP_Name}] [${Project_Name}] [%d] [%level] [%F] [%M] [%t:%L] [%m]%n
+			</pattern>
+		</encoder>        
+	</appender>
+
+	<!-- 本地文件 -->
+	<appender name="BENDI" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_DIR}/${LOG_NAME}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_DIR}/${logFileNamePattern}.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>50MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>7</maxHistory><!-- days -->
+		</rollingPolicy>
+		<layout>
+			<pattern>${fileLayoutPattern}</pattern>
+		</layout>
+	</appender>
+
+	<root level="info">
+		<springProfile name="dev">
+			<appender-ref ref="CONSOLE" />
+		</springProfile>
+		<appender-ref ref="BENDI" />
+	</root>
+
+</configuration>

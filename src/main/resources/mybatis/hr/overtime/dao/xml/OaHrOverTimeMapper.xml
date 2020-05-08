@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active4j.hr.hr.dao.OaHrOverTimeDao">
+
+	<select id="queryOverTimeModel" resultType="com.active4j.hr.hr.domain.OaHrUserOverTimeModel">
+		SELECT
+			a.ID,
+			a.REAL_NAME,
+			a.DEPART_NAME,
+			a.TOTAL,
+			a.WORKDAY,
+			a.WEEKEND,
+			a.HOLIDAY,
+			b.USED,
+			(a.TOTAL - b.USED) as SHENG
+		FROM
+			(
+				SELECT
+					u.ID,
+					u.REAL_NAME,
+					d.NAME AS DEPART_NAME,
+					IFNULL(sum(v.HOURS), 0) AS TOTAL,
+					IFNULL(
+						sum(
+							CASE v.TYPE
+							WHEN '0' THEN
+								v.HOURS
+							END
+						),
+						0
+					) AS WORKDAY,
+					IFNULL(
+						sum(
+							CASE v.TYPE
+							WHEN '1' THEN
+								v.HOURS
+							END
+						),
+						0
+					) AS WEEKEND,
+					IFNULL(
+						sum(
+							CASE v.TYPE
+							WHEN '2' THEN
+								v.HOURS
+							END
+						),
+						0
+					) AS HOLIDAY
+				FROM
+					oa_hr_user u
+				LEFT JOIN sys_depart d ON u.DEPT_ID = d.ID
+				LEFT JOIN oa_hr_over_time v ON u.ID = v.USER_ID
+				AND v.OPT_TYPE = '0'
+				GROUP BY
+					u.ID,
+					u.REAL_NAME,
+					d.NAME
+			) a
+		LEFT JOIN (
+			SELECT
+				u.ID,
+				u.REAL_NAME,
+				d.NAME,
+				IFNULL(sum(v.HOURS), 0) AS USED
+			FROM
+				oa_hr_user u
+			LEFT JOIN sys_depart d ON u.DEPT_ID = D.ID
+			LEFT JOIN oa_hr_over_time v ON u.ID = v.USER_ID
+			AND v.OPT_TYPE = '1'
+			GROUP BY
+				u.ID,
+				u.REAL_NAME,
+				d.NAME
+		) b ON a.ID = b.ID
+		
+		GROUP BY
+			a.ID,
+			a.REAL_NAME,
+			a.DEPART_NAME,
+			a.TOTAL,
+			a.WORKDAY,
+			a.WEEKEND,
+			a.HOLIDAY,
+			b.USED
+		ORDER BY a.DEPART_NAME, a.REAL_NAME
+	</select>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active4j.hr.hr.dao.OaHrTrainForceDao">
+
+	<select id="selectPageForce" resultType="com.active4j.hr.hr.domain.OaHrTrainForceModel">
+		SELECT
+			b.NAME AS PLAN_NAME, 
+			c.ID, c.START_DATE, c.END_DATE, c.PLACE, c.LEAD_PERSON, c.CAN_PERSON, c.PLAN_ID
+		FROM
+			oa_hr_train_force c
+		LEFT JOIN
+			oa_hr_train_plan b
+		ON
+			c.PLAN_ID = b.ID
+		<where>
+			<if test="planName!=null and planName!=''">  
+			    and b.NAME = #{planName} 
+			</if>
+		</where>
+		ORDER BY c.CREATE_DATE DESC
+	</select>
+</mapper>

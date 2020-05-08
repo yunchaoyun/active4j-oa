@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active4j.hr.hr.dao.OaHrRecruitOfferDao">
+
+	<select id="selectPageOffer" resultType="com.active4j.hr.hr.domain.OaHrRecruitOfferModel">
+		SELECT
+			b.NAME AS CV_NAME, b.SEX AS CV_SEX, b.CV_JOB AS CV_JOB, 
+			c.ID, c.CV_ID, c.REPORT_DATE, c.JOB_DEPART, c.JOB, c.TEST_WAGE, c.FORMAL_WAGE
+		FROM
+			oa_hr_recruit_offer c
+		LEFT JOIN
+			oa_hr_recruit_cv b
+		ON
+			c.CV_ID = b.ID
+		<where>
+			<if test="cvName!=null and cvName!=''">  
+			    and b.NAME = #{cvName} 
+			</if>
+		</where>
+		ORDER BY c.CREATE_DATE DESC
+	</select>
+</mapper>

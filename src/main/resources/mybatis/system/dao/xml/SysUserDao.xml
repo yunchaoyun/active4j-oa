@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active4j.hr.system.dao.SysUserDao">
+
+	<select id="findRolesByUserId" resultType="com.active4j.hr.system.entity.SysRoleEntity">
+		SELECT DISTINCT
+			sr.ID, sr.ROLE_CODE, sr.PARENT_ID, sr.ORDER_NO, sr.ROLE_NAME, sr.MEMO
+		FROM
+			sys_role sr,
+			sys_user_role ur,
+			sys_user su
+		WHERE
+			sr.ID = ur.ROLE_ID
+		AND ur.USER_ID = #{userId}
+	</select>
+	
+	<select id="getUnderUserIds" resultType="java.lang.String">
+		SELECT DISTINCT
+			u.ID
+		FROM
+			sys_role r,
+			sys_user_role ur,
+			sys_user u
+		WHERE
+			r.ID = ur.ROLE_ID
+		AND ur.USER_ID = u.ID
+		AND r.PARENT_ID in
+		<foreach collection="list" item="parendId" index="index" open="(" close=")" separator=",">
+        	#{parendId}
+    	</foreach>
+	</select>
+	
+	
+	<select id="findMenuByUserId" resultType="com.active4j.hr.system.entity.SysFunctionEntity">
+		SELECT
+			sm.ID, sm.ICON, sm.URL, sm.NAME, sm.ORDER_NO, sm.PARENT_ID
+		FROM
+			sys_user su,
+			sys_user_role ur,
+			sys_role sr,
+			sys_role_function rm,
+			sys_function sm
+		WHERE
+			su.ID = ur.USER_ID
+		AND ur.ROLE_ID = sr.ID
+		AND sr.ID = rm.ROLE_ID
+		AND rm.MENU_ID = sm.ID
+		
+		AND su.ID = #{userId}
+	</select>
+	
+	<select id="findOperationByUserId" resultType="java.lang.String">
+		SELECT
+			DISTINCT rm.OPERATION
+		FROM
+			sys_user su,
+			sys_user_role ur,
+			sys_role sr,
+			sys_role_function rm
+		WHERE
+			su.ID = ur.USER_ID
+		AND ur.ROLE_ID = sr.ID
+		AND sr.ID = rm.ROLE_ID
+		AND rm.OPERATION is not null
+		AND su.ID = #{userId}
+	</select>
+	
+	<select id="findInfoByUserId" resultType="com.active4j.hr.system.model.SysUserModel">
+		SELECT
+			su.ID, su.USER_NAME, su.REAL_NAME, su.HEAD_IMG_URL, su.EMAIL, su.TEL_NO, 
+			sr.ROLE_NAME, sd.NAME AS DEPT_NAME
+		FROM
+			sys_user su,
+			sys_user_role ur,
+			sys_role sr,
+			sys_depart sd
+		WHERE
+			su.ID = ur.USER_ID
+		AND ur.ROLE_ID = sr.ID
+		AND sr.ID = ur.ROLE_ID
+		AND su.DEPT_ID = sd.ID
+		AND su.ID = #{userId}
+	</select>
+	
+</mapper>

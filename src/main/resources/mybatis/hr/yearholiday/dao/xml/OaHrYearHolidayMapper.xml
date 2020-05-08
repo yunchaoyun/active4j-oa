@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active4j.hr.hr.dao.OaHrYearHolidayDao">
+
+	<select id="queryYearHolidayModel" resultType="com.active4j.hr.hr.domain.OaHrUserYearHolidayModel">
+		SELECT
+			a.ID,
+			a.REAL_NAME,
+			a.DEPART_NAME,
+			a.TOTAL,
+			a.USED,
+			(a.TOTAL - a.USED) AS SHENG
+		FROM
+			(
+				SELECT
+					u.ID,
+					u.REAL_NAME,
+					d.NAME AS DEPART_NAME,
+					IFNULL(
+						sum(
+							CASE y.OPT_TYPE
+							WHEN '0' THEN
+								y.DAYS
+							END
+						),
+						0
+					) AS TOTAL,
+					IFNULL(
+						sum(
+							CASE y.OPT_TYPE
+							WHEN '1' THEN
+								y.DAYS
+							END
+						),
+						0
+					) AS USED
+				FROM
+					oa_hr_user u
+				LEFT JOIN sys_depart d ON u.DEPT_ID = d.ID
+				LEFT JOIN oa_hr_year_holiday y ON u.ID = y.USER_ID
+				GROUP BY
+					u.ID,
+					u.REAL_NAME,
+					d.NAME
+					order by d.NAME, u.REAL_NAME
+			) a
+	</select>
+</mapper>

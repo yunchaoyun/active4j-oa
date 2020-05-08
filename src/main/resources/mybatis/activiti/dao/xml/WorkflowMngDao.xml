@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.active4j.hr.activiti.dao.WorkflowMngDao">
+
+	<select id="findWorkflowMngByUserIdAndRoleIds" resultType="com.active4j.hr.activiti.entity.WorkflowMngEntity">
+		SELECT
+		m.ID,
+		m.CATEGORY_ID,
+		m.DEPLOY_ID,
+		m.FORM_ID,
+		m.MEMO,
+		m. NAME,
+		m.PROCESS_DEFINE_ID,
+		m.STATUS,
+		m.PROCESS_KEY,
+		m.TYPE,
+		m.WORKFLOW_NO,
+		m.CREATE_NAME,
+		M.CREATE_DATE
+	FROM
+		wf_workflow_mng m
+	WHERE
+		m. STATUS = '0'
+	AND m.TYPE = '0'
+	UNION ALL
+		SELECT
+			m.ID,
+			m.CATEGORY_ID,
+			m.DEPLOY_ID,
+			m.FORM_ID,
+			m.MEMO,
+			m. NAME,
+			m.PROCESS_DEFINE_ID,
+			m. STATUS,
+			m.PROCESS_KEY,
+			m.TYPE,
+			m.WORKFLOW_NO,
+			m.CREATE_NAME,
+			M.CREATE_DATE
+		FROM
+			wf_workflow_mng m
+		WHERE
+			m. STATUS = '0'
+		AND m.TYPE = '1'
+		AND m.ID IN (
+			SELECT
+				a.workflow_id
+			FROM
+				wf_workflow_auth a
+			WHERE
+				(
+					(
+						a.TYPE = 'R'
+						AND a.U_R_ID IN
+						<foreach collection="roleIds" item="roleId" index="index" open="(" close=")" separator=",">
+        					#{roleId}
+    					</foreach>
+					)
+					OR (a.TYPE = 'U' AND a.U_R_ID = #{userId})
+				)
+		)
+		
+	</select>
+</mapper>
