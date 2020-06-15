@@ -35,7 +35,7 @@
                 <div class="form-group">
                     <input id="randCode" name="randCode" type="text" class="form-control" placeholder="验证码" required="" style="width: 60%">
                     <div style="float: right; margin-top: -3.4rem;">
-                         <img id="randCodeImage" src="verCode" />
+                         <img id="randCodeImage" src="" />
                     </div>
                 </div>
                 <button type="button" class="btn btn-primary block full-width m-b" onclick="doSubmit()">登 录</button>

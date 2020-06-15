@@ -57,6 +57,9 @@ $.validator.setDefaults({
 }), 
 
 $(function() {
+	//初始化验证码
+	reloadRandCodeImage();
+	
 	// 提示信息初始化
 	toastr.options = {
 		"closeButton" : true,
